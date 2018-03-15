@@ -1,4 +1,4 @@
-IMAGE:=node-workbench-image
+IMAGE:=tqxr/node-workbench-image
 
 ITEM_NODE:=node
 ITEM_NPM:=npm
@@ -7,6 +7,7 @@ ITEM_ESLINT:=eslint
 ITEM_JS_BEAUTIFY:=js-beautify
 ITEM_HTML_BEAUTIFY:=html-beautify
 ITEM_CSS_BEAUTIFY:=css-beautify
+ITEM_HTML_MINIFIER:=html-minifier
 
 ITEM_WORKBENCH:=node-workbench
 
@@ -15,6 +16,7 @@ BINPATH=/usr/local/bin/
 define RUN_COMMAND_WORKBENCH
 #!/bin/bash
 docker run -it --rm                                          \
+--name tqxr-node-workbench                                   \
 -v `pwd`:`pwd` -w `pwd`                                      \
 -h $(IMAGE).local                                            \
 $(IMAGE) "$$@"
@@ -72,6 +74,13 @@ docker run -it --rm                                          \
 $(IMAGE) $(BINPATH)$(ITEM_CSS_BEAUTIFY) "$$@"
 endef
 export RUN_COMMAND_CSS_BEAUTIFY
+define RUN_COMMAND_HTML_MINIFIER
+#!/bin/bash
+docker run -it --rm                                          \
+-v `pwd`:`pwd` -w `pwd`                                      \
+$(IMAGE) $(BINPATH)$(ITEM_HTML_MINIFIER) "$$@"
+endef
+export RUN_COMMAND_HTML_MINIFIER
 
 create-command:
 	echo "$$RUN_COMMAND_WORKBENCH" > "/usr/local/bin/${ITEM_WORKBENCH}"
@@ -90,15 +99,14 @@ create-command:
 	chmod u+x "/usr/local/bin/${ITEM_HTML_BEAUTIFY}"
 	echo "$$RUN_COMMAND_CSS_BEAUTIFY" > "/usr/local/bin/${ITEM_CSS_BEAUTIFY}"
 	chmod u+x "/usr/local/bin/${ITEM_HTML_BEAUTIFY}"
+	echo "$$RUN_COMMAND_HTML_MINIFY" > "/usr/local/bin/${ITEM_HTML_MINIFIER}"
+	chmod u+x "/usr/local/bin/${ITEM_HTML_MINIFIER}"
 
 install: create-command build
 	@:
 
 build:
 	docker build -t $(IMAGE) .
-
-run:
-	docker run -it -v `pwd`/app:/app --rm $(IMAGE) node index.js
 
 uninstall:
 	rm -f /usr/local/bin/$(ITEM_WORKBENCH)
@@ -109,7 +117,8 @@ uninstall:
 	rm -f /usr/local/bin/$(ITEM_JS_BEAUTIFY)
 	rm -f /usr/local/bin/$(ITEM_HTML_BEAUTIFY)
 	rm -f /usr/local/bin/$(ITEM_CSS_BEAUTIFY)
+	rm -f /usr/local/bin/$(ITEM_HTML_MINIFIER)
 	docker rmi $(IMAGE)
 
 shell:
-	docker run -it --rm -v `pwd`/app:/app $(IMAGE) ash
+	docker run -it --rm -v `pwd`/app:/app $(IMAGE)
