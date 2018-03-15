@@ -7,6 +7,7 @@ This toolbox contains a collection of tools which require nodejs to run.
 3. js-beautify
     * html-beautify
     * css-beautify
+4. html-minifier
 
 These commands are exposed in `/usr/local/bin` but they end up being
 pretty slow, because they create a new container every time.
