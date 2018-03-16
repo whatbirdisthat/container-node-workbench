@@ -8,6 +8,9 @@ This toolbox contains a collection of tools which require nodejs to run.
     * html-beautify
     * css-beautify
 4. html-minifier
+5. imagemin
+6. pug
+7. gulp
 
 These commands are exposed in `/usr/local/bin` but they end up being
 pretty slow, because they create a new container every time.
